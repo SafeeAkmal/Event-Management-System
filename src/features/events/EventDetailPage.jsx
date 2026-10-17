@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventDetails, clearSelectedEvent } from './eventsSlice';
-import { registerForEvent, cancelRegistration } from '../registrations/registrationSlice';
+import { registerForEvent, cancelRegistration } from '../registrations/registrationsSlice';
 
 const EventDetailPage = () => {
   const { id } = useParams();

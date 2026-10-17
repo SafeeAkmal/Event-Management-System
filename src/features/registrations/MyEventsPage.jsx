@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { cancelRegistration } from './registrationSlice';
+import { cancelRegistration } from './registrationsSlice';
 
 const MyEventsPage = () => {
   const dispatch = useDispatch();
