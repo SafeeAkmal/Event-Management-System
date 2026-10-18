@@ -2,6 +2,174 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { cancelRegistration } from './registrationsSlice';
+import { styled } from '../../stitches.config';
+import { Button } from '../../components/ui';
+
+// --- Styled Components ---
+
+const PageWrapper = styled('div', {
+  maxWidth: '64rem',
+  mx: 'auto',
+});
+
+const PageTitle = styled('h1', {
+  fontSize: '$3xl',
+  fontWeight: '$bold',
+  color: '$gray800',
+  marginBottom: '$6',
+});
+
+const EmptyCard = styled('div', {
+  backgroundColor: '$white',
+  padding: '$8',
+  borderRadius: '$lg',
+  boxShadow: '$DEFAULT',
+  border: '1px solid $gray100',
+  textAlign: 'center',
+});
+
+const EmptyText = styled('p', {
+  color: '$gray600',
+  marginBottom: '$4',
+});
+
+const ExploreLink = styled(Link, {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  px: '$4',
+  py: '$2',
+  backgroundColor: '$indigo600',
+  color: '$white',
+  borderRadius: '$DEFAULT',
+  fontWeight: '$medium',
+  transition: 'background-color 150ms ease',
+
+  '&:hover': {
+    backgroundColor: '$indigo700',
+  },
+});
+
+const SectionsWrapper = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$8',
+});
+
+const SectionTitle = styled('h2', {
+  fontSize: '$xl',
+  fontWeight: '$bold',
+  color: '$gray700',
+  marginBottom: '$4',
+  borderBottom: '1px solid $gray200',
+  paddingBottom: '$2',
+});
+
+const EventGrid = styled('div', {
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: '$4',
+
+  '@md': {
+    gridTemplateColumns: '1fr 1fr',
+  },
+});
+
+const UpcomingEventCard = styled('div', {
+  backgroundColor: '$white',
+  padding: '$4',
+  borderRadius: '$lg',
+  boxShadow: '$DEFAULT',
+  border: '1px solid $gray100',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+});
+
+const PastEventCard = styled('div', {
+  backgroundColor: '$gray50',
+  padding: '$4',
+  borderRadius: '$lg',
+  border: '1px solid $gray200',
+});
+
+const UpcomingBadge = styled('span', {
+  fontSize: '$xs',
+  fontWeight: '$semibold',
+  color: '$green600',
+  textTransform: 'uppercase',
+});
+
+const PastBadge = styled('span', {
+  fontSize: '$xs',
+  fontWeight: '$semibold',
+  color: '$gray500',
+  textTransform: 'uppercase',
+});
+
+const EventName = styled('h3', {
+  fontSize: '$lg',
+  fontWeight: '$bold',
+  marginTop: '$1',
+
+  variants: {
+    muted: {
+      true: { color: '$gray700' },
+      false: { color: '$gray800' },
+    },
+  },
+
+  defaultVariants: {
+    muted: 'false',
+  },
+});
+
+const EventDate = styled('p', {
+  fontSize: '$sm',
+  color: '$gray500',
+  marginTop: '$1',
+});
+
+const CardFooter = styled('div', {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: '$4',
+  paddingTop: '$3',
+  borderTop: '1px solid $gray200',
+});
+
+const DetailsLink = styled(Link, {
+  fontSize: '$sm',
+  color: '$indigo600',
+  fontWeight: '$medium',
+
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+});
+
+const CancelButton = styled('button', {
+  fontSize: '$xs',
+  color: '$red600',
+  fontWeight: '$medium',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: 0,
+
+  '&:hover': {
+    color: '$red800',
+  },
+});
+
+const EmptySection = styled('p', {
+  fontSize: '$sm',
+  color: '$gray500',
+  fontStyle: 'italic',
+});
+
+// --- Component ---
 
 const MyEventsPage = () => {
   const dispatch = useDispatch();
@@ -25,69 +193,62 @@ const MyEventsPage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">My Registered Events</h1>
+    <PageWrapper>
+      <PageTitle>My Registered Events</PageTitle>
 
       {registeredEvents.length === 0 ? (
-        <div className="bg-white p-8 rounded-lg shadow border border-gray-100 text-center">
-          <p className="text-gray-600 mb-4">You have not registered for any events yet.</p>
-          <Link to="/events" className="px-4 py-2 bg-indigo-600 text-white rounded font-medium hover:bg-indigo-700 transition">
-            Explore Events
-          </Link>
-        </div>
+        <EmptyCard>
+          <EmptyText>You have not registered for any events yet.</EmptyText>
+          <ExploreLink to="/events">Explore Events</ExploreLink>
+        </EmptyCard>
       ) : (
-        <div className="space-y-8">
+        <SectionsWrapper>
           {/* Upcoming Section */}
           <section>
-            <h2 className="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Upcoming Events ({upcomingEvents.length})</h2>
+            <SectionTitle>Upcoming Events ({upcomingEvents.length})</SectionTitle>
             {upcomingEvents.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">No upcoming registered events.</p>
+              <EmptySection>No upcoming registered events.</EmptySection>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <EventGrid>
                 {upcomingEvents.map((event) => (
-                  <div key={event.id} className="bg-white p-4 rounded-lg shadow border border-gray-100 flex flex-col justify-between">
+                  <UpcomingEventCard key={event.id}>
                     <div>
-                      <span className="text-xs font-semibold text-green-600 uppercase">Upcoming</span>
-                      <h3 className="text-lg font-bold text-gray-800 mt-1">{event.name}</h3>
-                      <p className="text-sm text-gray-500 mt-1">Date: {event.dates?.start?.localDate}</p>
+                      <UpcomingBadge>Upcoming</UpcomingBadge>
+                      <EventName muted="false">{event.name}</EventName>
+                      <EventDate>Date: {event.dates?.start?.localDate}</EventDate>
                     </div>
-                    <div className="flex justify-between items-center mt-4 pt-3 border-t">
-                      <Link to={`/events/${event.id}`} className="text-sm text-indigo-600 hover:underline font-medium">
-                        View Details
-                      </Link>
-                      <button
-                        onClick={() => handleCancel(event.id)}
-                        className="text-xs text-red-600 hover:text-red-800 font-medium"
-                      >
+                    <CardFooter>
+                      <DetailsLink to={`/events/${event.id}`}>View Details</DetailsLink>
+                      <CancelButton onClick={() => handleCancel(event.id)}>
                         Cancel Registration
-                      </button>
-                    </div>
-                  </div>
+                      </CancelButton>
+                    </CardFooter>
+                  </UpcomingEventCard>
                 ))}
-              </div>
+              </EventGrid>
             )}
           </section>
 
           {/* Completed / Past Section */}
           <section>
-            <h2 className="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Past Events ({pastEvents.length})</h2>
+            <SectionTitle>Past Events ({pastEvents.length})</SectionTitle>
             {pastEvents.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">No completed registered events.</p>
+              <EmptySection>No completed registered events.</EmptySection>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <EventGrid>
                 {pastEvents.map((event) => (
-                  <div key={event.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <span className="text-xs font-semibold text-gray-500 uppercase">Completed</span>
-                    <h3 className="text-lg font-bold text-gray-700 mt-1">{event.name}</h3>
-                    <p className="text-sm text-gray-500 mt-1">Date: {event.dates?.start?.localDate}</p>
-                  </div>
+                  <PastEventCard key={event.id}>
+                    <PastBadge>Completed</PastBadge>
+                    <EventName muted="true">{event.name}</EventName>
+                    <EventDate>Date: {event.dates?.start?.localDate}</EventDate>
+                  </PastEventCard>
                 ))}
-              </div>
+              </EventGrid>
             )}
           </section>
-        </div>
+        </SectionsWrapper>
       )}
-    </div>
+    </PageWrapper>
   );
 };
 

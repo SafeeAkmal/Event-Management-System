@@ -1,22 +1,64 @@
 import React from 'react';
+import { styled } from '../../../stitches.config';
+import { Button, Input } from '../../../components/ui';
+
+// --- Styled Components ---
+
+const FiltersForm = styled('form', {
+  backgroundColor: '$white',
+  padding: '$4',
+  borderRadius: '$lg',
+  boxShadow: '$DEFAULT',
+  border: '1px solid $gray100',
+  marginBottom: '$6',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$4',
+
+  '@md': {
+    flexDirection: 'row',
+  },
+});
+
+const SearchInput = styled(Input, {
+  flex: '1',
+});
+
+const CategorySelect = styled('select', {
+  px: '$4',
+  py: '$2',
+  border: '1px solid $gray300',
+  borderRadius: '$DEFAULT',
+  fontSize: '$base',
+  color: '$gray900',
+  backgroundColor: '$white',
+  outline: 'none',
+  cursor: 'pointer',
+  transition: 'border-color 150ms ease, box-shadow 150ms ease',
+
+  '&:focus': {
+    borderColor: '$indigo500',
+    boxShadow: '0 0 0 2px rgba(99,102,241,0.25)',
+  },
+});
+
+// --- Component ---
 
 const EventFilters = ({ keyword, category, onSearchChange, onCategoryChange, onSearchSubmit }) => {
   const categories = ['Music', 'Sports', 'Arts & Theatre', 'Film', 'Miscellaneous'];
 
   return (
-    <form onSubmit={onSearchSubmit} className="bg-white p-4 rounded-lg shadow border border-gray-100 mb-6 flex flex-col md:flex-row gap-4">
-      <input
+    <FiltersForm onSubmit={onSearchSubmit}>
+      <SearchInput
         type="text"
         placeholder="Search events by name or keyword..."
         value={keyword}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
 
-      <select
+      <CategorySelect
         value={category}
         onChange={(e) => onCategoryChange(e.target.value)}
-        className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         <option value="">All Categories</option>
         {categories.map((cat) => (
@@ -24,15 +66,12 @@ const EventFilters = ({ keyword, category, onSearchChange, onCategoryChange, onS
             {cat}
           </option>
         ))}
-      </select>
+      </CategorySelect>
 
-      <button
-        type="submit"
-        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2 rounded transition"
-      >
+      <Button type="submit" variant="primary" size="md">
         Search
-      </button>
-    </form>
+      </Button>
+    </FiltersForm>
   );
 };
 

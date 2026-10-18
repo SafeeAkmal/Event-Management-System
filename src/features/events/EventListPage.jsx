@@ -3,6 +3,92 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchEvents, setFilters } from './eventsSlice';
 import EventCard from './components/EventCard';
 import EventFilters from './components/EventFilters';
+import { styled } from '../../stitches.config';
+import { Button } from '../../components/ui';
+
+// --- Styled Components ---
+
+const PageTitle = styled('h1', {
+  fontSize: '$3xl',
+  fontWeight: '$bold',
+  color: '$gray800',
+  marginBottom: '$6',
+});
+
+const LoadingMessage = styled('div', {
+  textAlign: 'center',
+  paddingTop: '$12',
+  paddingBottom: '$12',
+  color: '$gray500',
+  fontWeight: '$medium',
+});
+
+const ErrorMessage = styled('div', {
+  padding: '$4',
+  backgroundColor: '$red100',
+  border: '1px solid $red400',
+  color: '$red700',
+  borderRadius: '$DEFAULT',
+  marginBottom: '$6',
+});
+
+const EmptyMessage = styled('div', {
+  textAlign: 'center',
+  paddingTop: '$12',
+  paddingBottom: '$12',
+  color: '$gray500',
+});
+
+const EventGrid = styled('div', {
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: '$6',
+
+  '@sm': {
+    gridTemplateColumns: '1fr 1fr',
+  },
+  '@md': {
+    gridTemplateColumns: '1fr 1fr 1fr',
+  },
+  '@lg': {
+    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+  },
+});
+
+const Pagination = styled('div', {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '$4',
+  marginTop: '$8',
+});
+
+const PageInfo = styled('span', {
+  fontSize: '$sm',
+  color: '$gray600',
+});
+
+const PaginationButton = styled('button', {
+  px: '$4',
+  py: '$2',
+  border: '1px solid $gray300',
+  borderRadius: '$DEFAULT',
+  fontSize: '$sm',
+  backgroundColor: '$white',
+  cursor: 'pointer',
+  transition: 'background-color 150ms ease',
+
+  '&:hover:not(:disabled)': {
+    backgroundColor: '$gray50',
+  },
+
+  '&:disabled': {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+});
+
+// --- Component ---
 
 const EventListPage = () => {
   const dispatch = useDispatch();
@@ -25,7 +111,7 @@ const EventListPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Explore Upcoming Events</h1>
+      <PageTitle>Explore Upcoming Events</PageTitle>
 
       <EventFilters
         keyword={keyword}
@@ -39,50 +125,46 @@ const EventListPage = () => {
       />
 
       {loading && (
-        <div className="text-center py-12 text-gray-500 font-medium">
+        <LoadingMessage>
           Loading events from Ticketmaster...
-        </div>
+        </LoadingMessage>
       )}
 
       {error && (
-        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-6">
-          {error}
-        </div>
+        <ErrorMessage>{error}</ErrorMessage>
       )}
 
       {!loading && !error && list.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
+        <EmptyMessage>
           No events found. Try adjusting your search or category filter.
-        </div>
+        </EmptyMessage>
       )}
 
       {!loading && !error && list.length > 0 && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <EventGrid>
             {list.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
-          </div>
+          </EventGrid>
 
-          <div className="flex justify-center items-center space-x-4 mt-8">
-            <button
+          <Pagination>
+            <PaginationButton
               disabled={pagination.currentPage === 0}
               onClick={() => handlePageChange(pagination.currentPage - 1)}
-              className="px-4 py-2 border rounded text-sm disabled:opacity-50 hover:bg-gray-50"
             >
               Previous
-            </button>
-            <span className="text-sm text-gray-600">
+            </PaginationButton>
+            <PageInfo>
               Page {pagination.currentPage + 1} of {pagination.totalPages}
-            </span>
-            <button
+            </PageInfo>
+            <PaginationButton
               disabled={pagination.currentPage + 1 >= pagination.totalPages}
               onClick={() => handlePageChange(pagination.currentPage + 1)}
-              className="px-4 py-2 border rounded text-sm disabled:opacity-50 hover:bg-gray-50"
             >
               Next
-            </button>
-          </div>
+            </PaginationButton>
+          </Pagination>
         </>
       )}
     </div>

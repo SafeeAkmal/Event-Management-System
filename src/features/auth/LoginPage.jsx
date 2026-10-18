@@ -2,6 +2,77 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser, clearAuthError } from './authSlice';
+import { styled } from '../../stitches.config';
+import { Button, Input } from '../../components/ui';
+
+// --- Styled Components ---
+
+const PageCard = styled('div', {
+  maxWidth: '28rem',
+  mx: 'auto',
+  marginTop: '$10',
+  padding: '$6',
+  backgroundColor: '$white',
+  borderRadius: '$lg',
+  boxShadow: '$md',
+  border: '1px solid $gray100',
+});
+
+const PageTitle = styled('h2', {
+  fontSize: '$2xl',
+  fontWeight: '$bold',
+  marginBottom: '$6',
+  textAlign: 'center',
+  color: '$gray800',
+});
+
+const ErrorBanner = styled('div', {
+  marginBottom: '$4',
+  padding: '$3',
+  backgroundColor: '$red100',
+  border: '1px solid $red400',
+  color: '$red700',
+  fontSize: '$sm',
+  borderRadius: '$DEFAULT',
+});
+
+const FormStack = styled('form', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$4',
+});
+
+const FieldGroup = styled('div', {});
+
+const FieldLabel = styled('label', {
+  display: 'block',
+  fontSize: '$sm',
+  fontWeight: '$medium',
+  color: '$gray700',
+  marginBottom: '$1',
+});
+
+const FullWidthButton = styled(Button, {
+  width: '100%',
+});
+
+const FooterText = styled('p', {
+  marginTop: '$4',
+  textAlign: 'center',
+  fontSize: '$sm',
+  color: '$gray600',
+});
+
+const AuthLink = styled(Link, {
+  color: '$indigo600',
+  fontWeight: '$medium',
+
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+});
+
+// --- Component ---
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -23,55 +94,44 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md border border-gray-100">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Log In</h2>
+    <PageCard>
+      <PageTitle>Log In</PageTitle>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 text-sm rounded">
-          {error}
-        </div>
-      )}
+      {error && <ErrorBanner>{error}</ErrorBanner>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
+      <FormStack onSubmit={handleSubmit}>
+        <FieldGroup>
+          <FieldLabel>Email</FieldLabel>
+          <Input
             type="email"
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             placeholder="john@example.com"
           />
-        </div>
+        </FieldGroup>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input
+        <FieldGroup>
+          <FieldLabel>Password</FieldLabel>
+          <Input
             type="password"
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             placeholder="••••••••"
           />
-        </div>
+        </FieldGroup>
 
-        <button
-          type="submit"
-          className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-        >
+        <FullWidthButton type="submit" variant="primary">
           Sign In
-        </button>
-      </form>
+        </FullWidthButton>
+      </FormStack>
 
-      <p className="mt-4 text-center text-sm text-gray-600">
+      <FooterText>
         Don't have an account?{' '}
-        <Link to="/register" className="text-indigo-600 font-medium hover:underline">
-          Register here
-        </Link>
-      </p>
-    </div>
+        <AuthLink to="/register">Register here</AuthLink>
+      </FooterText>
+    </PageCard>
   );
 };
 

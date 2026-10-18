@@ -2,6 +2,108 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logoutUser } from '../features/auth/authSlice';
+import { styled } from '../stitches.config';
+
+// --- Styled Components ---
+
+const Nav = styled('nav', {
+  backgroundColor: '$indigo600',
+  color: '$white',
+  boxShadow: '$md',
+});
+
+const NavInner = styled('div', {
+  maxWidth: '1280px',
+  mx: 'auto',
+  px: '$4',
+  paddingTop: '$3',
+  paddingBottom: '$3',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+
+const BrandLink = styled(Link, {
+  fontSize: '$xl',
+  fontWeight: '$bold',
+  letterSpacing: '-0.025em',
+  color: '$white',
+});
+
+const NavLinks = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '$6',
+});
+
+const NavLink = styled(Link, {
+  color: '$white',
+  transition: 'color 150ms ease',
+
+  '&:hover': {
+    color: '$indigo200',
+  },
+});
+
+const UserSection = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '$3',
+  borderLeft: '1px solid $indigo400',
+  paddingLeft: '$4',
+});
+
+const GreetingText = styled('span', {
+  fontSize: '$sm',
+  fontWeight: '$medium',
+  color: '$white',
+});
+
+const LogoutButton = styled('button', {
+  backgroundColor: '$indigo700',
+  color: '$white',
+  fontSize: '$xs',
+  px: '$3',
+  paddingTop: '0.375rem',
+  paddingBottom: '0.375rem',
+  borderRadius: '$DEFAULT',
+  border: 'none',
+  cursor: 'pointer',
+  transition: 'background-color 150ms ease',
+
+  '&:hover': {
+    backgroundColor: '$indigo800',
+  },
+});
+
+const RegisterLink = styled(Link, {
+  backgroundColor: '$white',
+  color: '$indigo600',
+  fontSize: '$sm',
+  fontWeight: '$medium',
+  px: '$3',
+  paddingTop: '0.375rem',
+  paddingBottom: '0.375rem',
+  borderRadius: '$DEFAULT',
+  boxShadow: '$sm',
+  transition: 'background-color 150ms ease',
+
+  '&:hover': {
+    backgroundColor: '$indigo50',
+  },
+});
+
+const LoginLink = styled(Link, {
+  fontSize: '$sm',
+  color: '$white',
+  transition: 'color 150ms ease',
+
+  '&:hover': {
+    color: '$indigo200',
+  },
+});
+
+// --- Component ---
 
 const Navbar = () => {
   const { currentUser } = useSelector((state) => state.auth);
@@ -14,45 +116,30 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-indigo-600 text-white shadow-md">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link className="text-xl font-bold tracking-tight" to="/events">
-          EventHub
-        </Link>
+    <Nav>
+      <NavInner>
+        <BrandLink to="/events">EventHub</BrandLink>
 
-        <div className="flex items-center space-x-6">
-          <Link className="hover:text-indigo-200 transition" to="/events">
-            Explore Events
-          </Link>
+        <NavLinks>
+          <NavLink to="/events">Explore Events</NavLink>
 
           {currentUser ? (
             <>
-              <Link className="hover:text-indigo-200 transition" to="/my-events">
-                My Events
-              </Link>
-              <div className="flex items-center space-x-3 border-l border-indigo-400 pl-4">
-                <span className="text-sm font-medium">Hello, {currentUser.name}</span>
-                <button
-                  onClick={handleLogout}
-                  className="bg-indigo-700 hover:bg-indigo-800 text-xs px-3 py-1.5 rounded transition"
-                >
-                  Logout
-                </button>
-              </div>
+              <NavLink to="/my-events">My Events</NavLink>
+              <UserSection>
+                <GreetingText>Hello, {currentUser.name}</GreetingText>
+                <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+              </UserSection>
             </>
           ) : (
-            <div className="flex items-center space-x-3 border-l border-indigo-400 pl-4">
-              <Link className="text-sm hover:text-indigo-200 transition" to="/login">
-                Log In
-              </Link>
-              <Link className="bg-white text-indigo-600 hover:bg-indigo-50 text-sm font-medium px-3 py-1.5 rounded shadow transition" to="/register">
-                Register
-              </Link>
-            </div>
+            <UserSection>
+              <LoginLink to="/login">Log In</LoginLink>
+              <RegisterLink to="/register">Register</RegisterLink>
+            </UserSection>
           )}
-        </div>
-      </div>
-    </nav>
+        </NavLinks>
+      </NavInner>
+    </Nav>
   );
 };
 

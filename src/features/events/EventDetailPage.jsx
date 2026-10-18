@@ -3,6 +3,193 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventDetails, clearSelectedEvent } from './eventsSlice';
 import { registerForEvent, cancelRegistration } from '../registrations/registrationsSlice';
+import { styled } from '../../stitches.config';
+import { Button } from '../../components/ui';
+
+// --- Styled Components ---
+
+const LoadingText = styled('div', {
+  textAlign: 'center',
+  paddingTop: '$12',
+  paddingBottom: '$12',
+  color: '$gray500',
+});
+
+const ErrorBox = styled('div', {
+  maxWidth: '42rem',
+  mx: 'auto',
+  my: '$8',
+  padding: '$4',
+  backgroundColor: '$red100',
+  border: '1px solid $red400',
+  color: '$red700',
+  borderRadius: '$DEFAULT',
+  textAlign: 'center',
+});
+
+const ErrorLinkWrapper = styled('div', {
+  marginTop: '$4',
+});
+
+const BackLink = styled(Link, {
+  color: '$indigo600',
+  fontWeight: '$semibold',
+  textDecoration: 'underline',
+});
+
+const PageWrapper = styled('div', {
+  maxWidth: '56rem',
+  mx: 'auto',
+  backgroundColor: '$white',
+  borderRadius: '$lg',
+  boxShadow: '$DEFAULT',
+  border: '1px solid $gray100',
+  overflow: 'hidden',
+});
+
+const HeroImage = styled('img', {
+  width: '100%',
+  height: '20rem',
+  objectFit: 'cover',
+});
+
+const ContentArea = styled('div', {
+  padding: '$6',
+});
+
+const FeedbackBanner = styled('div', {
+  marginBottom: '$4',
+  padding: '$3',
+  borderRadius: '$DEFAULT',
+  fontSize: '$sm',
+
+  variants: {
+    type: {
+      success: {
+        backgroundColor: '$green100',
+        color: '$green700',
+        border: '1px solid $green300',
+      },
+      info: {
+        backgroundColor: '$blue100',
+        color: '$blue700',
+        border: '1px solid $blue300',
+      },
+    },
+  },
+});
+
+const HeaderRow = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$4',
+  marginBottom: '$6',
+
+  '@md': {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+});
+
+const CategoryTag = styled('span', {
+  fontSize: '$xs',
+  fontWeight: '$bold',
+  color: '$indigo600',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+});
+
+const EventTitle = styled('h1', {
+  fontSize: '$3xl',
+  fontWeight: '$bold',
+  color: '$gray900',
+  marginTop: '$1',
+});
+
+const ButtonWrapper = styled('div', {
+  width: '100%',
+
+  '@md': {
+    width: 'auto',
+  },
+});
+
+const RegisterButton = styled(Button, {
+  width: '100%',
+  '@md': {
+    width: 'auto',
+  },
+});
+
+const DetailsGrid = styled('div', {
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: '$6',
+  borderTop: '1px solid $gray100',
+  borderBottom: '1px solid $gray100',
+  paddingTop: '$6',
+  paddingBottom: '$6',
+  my: '$6',
+
+  '@md': {
+    gridTemplateColumns: '1fr 1fr',
+  },
+});
+
+const DetailLabel = styled('h3', {
+  fontSize: '$sm',
+  fontWeight: '$semibold',
+  color: '$gray500',
+  textTransform: 'uppercase',
+});
+
+const DetailValue = styled('p', {
+  color: '$gray800',
+  fontWeight: '$medium',
+  marginTop: '$1',
+});
+
+const DetailSub = styled('p', {
+  fontSize: '$xs',
+  color: '$gray500',
+  marginTop: '2px',
+});
+
+const TicketLink = styled('a', {
+  color: '$indigo600',
+  fontSize: '$sm',
+  fontWeight: '$medium',
+  marginTop: '$1',
+  display: 'inline-block',
+
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+});
+
+const NoteBox = styled('div', {
+  marginTop: '$4',
+  padding: '$4',
+  backgroundColor: '$gray50',
+  borderRadius: '$DEFAULT',
+  border: '1px solid $gray200',
+});
+
+const NoteLabel = styled('h4', {
+  fontSize: '$xs',
+  fontWeight: '$semibold',
+  color: '$gray500',
+  textTransform: 'uppercase',
+  marginBottom: '$1',
+});
+
+const NoteText = styled('p', {
+  fontSize: '$sm',
+  color: '$gray600',
+});
+
+// --- Component ---
 
 const EventDetailPage = () => {
   const { id } = useParams();
@@ -11,7 +198,7 @@ const EventDetailPage = () => {
 
   const { selectedEvent: event, loading, error } = useSelector((state) => state.events);
   const { currentUser } = useSelector((state) => state.auth);
-  const userRegistrations = useSelector((state) => 
+  const userRegistrations = useSelector((state) =>
     currentUser ? state.registrations.byUser[currentUser.email] || [] : []
   );
 
@@ -25,17 +212,17 @@ const EventDetailPage = () => {
   }, [dispatch, id]);
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-500">Loading event details...</div>;
+    return <LoadingText>Loading event details...</LoadingText>;
   }
 
   if (error || !event) {
     return (
-      <div className="max-w-2xl mx-auto my-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded text-center">
+      <ErrorBox>
         {error || 'Event not found.'}
-        <div className="mt-4">
-          <Link to="/events" className="text-indigo-600 font-semibold underline">Back to Events</Link>
-        </div>
-      </div>
+        <ErrorLinkWrapper>
+          <BackLink to="/events">Back to Events</BackLink>
+        </ErrorLinkWrapper>
+      </ErrorBox>
     );
   }
 
@@ -59,89 +246,82 @@ const EventDetailPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow border border-gray-100 overflow-hidden">
-      {image && (
-        <img src={image.url} alt={event.name} className="w-full h-80 object-cover" />
-      )}
+    <PageWrapper>
+      {image && <HeroImage src={image.url} alt={event.name} />}
 
-      <div className="p-6">
+      <ContentArea>
         {feedback && (
-          <div className={`mb-4 p-3 rounded text-sm ${feedback.type === 'success' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-blue-100 text-blue-700 border border-blue-300'}`}>
+          <FeedbackBanner type={feedback.type}>
             {feedback.message}
-          </div>
+          </FeedbackBanner>
         )}
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <HeaderRow>
           <div>
-            <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">
+            <CategoryTag>
               {event.classifications?.[0]?.segment?.name} &bull; {event.classifications?.[0]?.genre?.name}
-            </span>
-            <h1 className="text-3xl font-bold text-gray-900 mt-1">{event.name}</h1>
+            </CategoryTag>
+            <EventTitle>{event.name}</EventTitle>
           </div>
 
-          <div>
+          <ButtonWrapper>
             {isRegistered ? (
-              <button
-                onClick={handleCancel}
-                className="w-full md:w-auto px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded shadow transition"
-              >
+              <RegisterButton onClick={handleCancel} variant="danger">
                 Cancel Registration
-              </button>
+              </RegisterButton>
             ) : (
-              <button
-                onClick={handleRegister}
-                className="w-full md:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded shadow transition"
-              >
+              <RegisterButton onClick={handleRegister} variant="primary">
                 Register for Event
-              </button>
+              </RegisterButton>
             )}
-          </div>
-        </div>
+          </ButtonWrapper>
+        </HeaderRow>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-b border-gray-100 py-6 my-6">
+        <DetailsGrid>
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase">Date & Time</h3>
-            <p className="text-gray-800 font-medium mt-1">
-              {event.dates?.start?.localDate} {event.dates?.start?.localTime ? `at ${event.dates.start.localTime.slice(0, 5)}` : ''}
-            </p>
-            <p className="text-xs text-gray-500 mt-0.5">Timezone: {event.dates?.timezone || 'Local'}</p>
+            <DetailLabel>Date &amp; Time</DetailLabel>
+            <DetailValue>
+              {event.dates?.start?.localDate}{' '}
+              {event.dates?.start?.localTime ? `at ${event.dates.start.localTime.slice(0, 5)}` : ''}
+            </DetailValue>
+            <DetailSub>Timezone: {event.dates?.timezone || 'Local'}</DetailSub>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase">Venue & Location</h3>
-            <p className="text-gray-800 font-medium mt-1">{venue?.name || 'TBA'}</p>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <DetailLabel>Venue &amp; Location</DetailLabel>
+            <DetailValue>{venue?.name || 'TBA'}</DetailValue>
+            <DetailSub>
               {venue?.address?.line1}, {venue?.city?.name}, {venue?.country?.name}
-            </p>
+            </DetailSub>
           </div>
 
           {priceRange && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase">Pricing</h3>
-              <p className="text-gray-800 font-medium mt-1">
+              <DetailLabel>Pricing</DetailLabel>
+              <DetailValue>
                 {priceRange.min} - {priceRange.max} {priceRange.currency}
-              </p>
+              </DetailValue>
             </div>
           )}
 
           {event.url && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase">Official Tickets</h3>
-              <a href={event.url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline font-medium mt-1 inline-block text-sm">
+              <DetailLabel>Official Tickets</DetailLabel>
+              <TicketLink href={event.url} target="_blank" rel="noopener noreferrer">
                 Buy on Ticketmaster &rarr;
-              </a>
+              </TicketLink>
             </div>
           )}
-        </div>
+        </DetailsGrid>
 
         {event.pleaseNote && (
-          <div className="mt-4 p-4 bg-gray-50 rounded border border-gray-200">
-            <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Important Note</h4>
-            <p className="text-sm text-gray-600">{event.pleaseNote}</p>
-          </div>
+          <NoteBox>
+            <NoteLabel>Important Note</NoteLabel>
+            <NoteText>{event.pleaseNote}</NoteText>
+          </NoteBox>
         )}
-      </div>
-    </div>
+      </ContentArea>
+    </PageWrapper>
   );
 };
 
