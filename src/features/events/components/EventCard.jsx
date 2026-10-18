@@ -1,5 +1,87 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { styled } from '../../../stitches.config';
+
+// --- Styled Components ---
+
+const CardWrapper = styled('div', {
+  backgroundColor: '$white',
+  borderRadius: '$lg',
+  boxShadow: '$DEFAULT',
+  border: '1px solid $gray100',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'box-shadow 150ms ease',
+
+  '&:hover': {
+    boxShadow: '$lg',
+  },
+});
+
+const EventImage = styled('img', {
+  height: '12rem',
+  width: '100%',
+  objectFit: 'cover',
+});
+
+const CardBody = styled('div', {
+  padding: '$4',
+  flex: '1',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+});
+
+const CategoryLabel = styled('span', {
+  fontSize: '$xs',
+  fontWeight: '$semibold',
+  color: '$indigo600',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+});
+
+const EventTitle = styled('h3', {
+  fontSize: '$lg',
+  fontWeight: '$bold',
+  color: '$gray800',
+  marginTop: '$1',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitLineClamp: 1,
+  WebkitBoxOrient: 'vertical',
+});
+
+const EventDate = styled('p', {
+  fontSize: '$sm',
+  color: '$gray500',
+  marginTop: '$1',
+});
+
+const EventVenue = styled('p', {
+  fontSize: '$xs',
+  color: '$gray600',
+  marginTop: '$1',
+});
+
+const ViewDetailsLink = styled(Link, {
+  marginTop: '$4',
+  display: 'block',
+  textAlign: 'center',
+  backgroundColor: '$indigo50',
+  color: '$indigo600',
+  fontWeight: '$medium',
+  paddingTop: '$2',
+  paddingBottom: '$2',
+  borderRadius: '$DEFAULT',
+  transition: 'background-color 150ms ease',
+
+  '&:hover': {
+    backgroundColor: '$indigo100',
+  },
+});
+
+// --- Component ---
 
 const EventCard = ({ event }) => {
   const image = event.images?.find((img) => img.ratio === '16_9') || event.images?.[0];
@@ -8,38 +90,32 @@ const EventCard = ({ event }) => {
   const timeStr = event.dates?.start?.localTime;
 
   return (
-    <div className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition">
+    <CardWrapper>
       {image && (
-        <img
+        <EventImage
           src={image.url}
           alt={event.name}
-          className="h-48 w-full object-cover"
         />
       )}
-      <div className="p-4 flex-1 flex flex-col justify-between">
+      <CardBody>
         <div>
-          <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">
+          <CategoryLabel>
             {event.classifications?.[0]?.segment?.name || 'Event'}
-          </span>
-          <h3 className="text-lg font-bold text-gray-800 mt-1 line-clamp-1">
-            {event.name}
-          </h3>
-          <p className="text-sm text-gray-500 mt-1">
+          </CategoryLabel>
+          <EventTitle>{event.name}</EventTitle>
+          <EventDate>
             {dateStr} {timeStr ? `at ${timeStr.slice(0, 5)}` : ''}
-          </p>
-          <p className="text-xs text-gray-600 mt-1">
+          </EventDate>
+          <EventVenue>
             {venue ? `${venue.name}, ${venue.city?.name || ''}` : 'Location TBD'}
-          </p>
+          </EventVenue>
         </div>
 
-        <Link
-          to={`/events/${event.id}`}
-          className="mt-4 block text-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-medium py-2 rounded transition"
-        >
+        <ViewDetailsLink to={`/events/${event.id}`}>
           View Details
-        </Link>
-      </div>
-    </div>
+        </ViewDetailsLink>
+      </CardBody>
+    </CardWrapper>
   );
 };
 

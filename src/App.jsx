@@ -7,28 +7,36 @@ import RegisterPage from './features/auth/RegisterPage';
 import EventListPage from './features/events/EventListPage';
 import EventDetailPage from './features/events/EventDetailPage';
 import MyEventsPage from './features/registrations/MyEventsPage';
+import { styled } from './stitches.config';
+
+const MainContent = styled('main', {
+  maxWidth: '1280px',
+  mx: 'auto',
+  px: '$4',
+  py: '$8',
+});
 
 function App() {
   return (
     <Router>
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
+      <MainContent>
         <Routes>
           {/* Default Route */}
           <Route path="/" element={<Navigate to="/events" replace />} />
-          
+
           {/* Public Routes */}
           <Route path="/events" element={<EventListPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          
+
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/my-events" element={<MyEventsPage />} />
           </Route>
         </Routes>
-      </main>
+      </MainContent>
     </Router>
   );
 }
